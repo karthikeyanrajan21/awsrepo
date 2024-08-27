@@ -38,7 +38,7 @@ jobs:
 
     - name: Terraform Apply
       if: steps.plan.outputs.changes == 'true'
-      run: terraform apply -auto-approve plan.tfplan
+      run: terraform apply --auto-approve
      
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
