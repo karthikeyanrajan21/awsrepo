@@ -37,7 +37,6 @@ jobs:
         AWS_REGION: us-east-1
 
     - name: Terraform Apply
-      if: steps.plan.outputs.changes == 'true'
       run: terraform apply --auto-approve
      
       env:
