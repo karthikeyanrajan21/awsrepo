@@ -4,7 +4,7 @@ resource "aws_instance" "newinstance" {
   vpc_security_group_ids = [aws_security_group.knsgq.id]
 
   tags = {
-    Name        = "newinstancee"
+    Name        = "newinstance"
     description = "ec2forsshandicmp"
   }
 }
