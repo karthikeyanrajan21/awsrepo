@@ -3,13 +3,13 @@ name: Terraform Workflow
 on:
   push:
     branches:
-      - main
+      - dev
   workflow_dispatch:
 
 env:
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  AWS_REGION: ${{ secrets.AWS_REGION }}
+  AWS_REGION: ${{ secrets.AWS_REGION_DEV }}
 
 jobs:
   terraform:
@@ -38,4 +38,3 @@ jobs:
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
-
