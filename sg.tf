@@ -1,5 +1,5 @@
-resource "aws_security_group" "knsg" {
-  name        = "knsg"
+resource "aws_security_group" "knsgq" {
+  name        = "knsgq"
   description = "group for allowing SSH and ICMP"
 
   tags = {
@@ -9,7 +9,7 @@ resource "aws_security_group" "knsg" {
 
 
 resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
-  security_group_id = aws_security_group.knsg.id
+  security_group_id = aws_security_group.knsgq.id
   cidr_ipv4         = "0.0.0.0/0"
   from_port         = 22
   ip_protocol       = "tcp"
@@ -17,10 +17,8 @@ resource "aws_vpc_security_group_ingress_rule" "allow_ssh" {
 }
 
 resource "aws_vpc_security_group_egress_rule" "allow_all" {
-  security_group_id = aws_security_group.knsg.id
+  security_group_id = aws_security_group.knsgq.id
   cidr_ipv4         = "0.0.0.0/0"
-  from_port         = 0
-  to_port           = 0
   ip_protocol       = "-1"
 
 }
