@@ -1,9 +1,10 @@
-name: Terraform Deploy
+name: Terraform Workflow
 
 on:
   push:
     branches:
       - dev
+  workflow_dispatch:
 
 jobs:
   terraform:
@@ -13,22 +14,28 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: arn:aws:iam::658044103911:role/myrole
+          aws-region: us-east-1
+
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.4.6
+          terraform_version: 1.5.7
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v3
-        with:
-          role-to-assume: arn:aws:iam::658044103911:role/githubactions
-          aws-region: us-east-2
-
-      - name: Terraform Init
-        run: terraform init
+      - name: Terraform Init with Migration Check
+        run: |
+          if terraform init -migrate-state; then
+            echo "State migration successful."
+          else
+            echo "State migration failed. Running without migration."
+            terraform init
+          fi
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -out=tfplan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -auto-approve tfplan
