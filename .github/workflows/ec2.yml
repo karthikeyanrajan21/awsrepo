@@ -1,43 +1,39 @@
-name: Terraform Workflow
+name: Configure AWS Credentials and Deploy
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 permissions:
-  id-token: write
+  id-token: write  # Allow the workflow to request OIDC tokens
+  contents: read   # Allow the workflow to access the repository contents
 
 jobs:
-  terraform:
+  configure-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.5.7
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          role-to-assume: arn:aws:iam::658044103911:role/myrole
+          role-to-assume: arn:aws:iam::658044103911:role/Githubkn
+          role-session-name: github-actions-session
+          aws-region: us-east-1
 
-      - name: Terraform Init with Migration Check
-        run: |
-          if terraform init -migrate-state; then
-            echo "State migration successful."
-          else
-            echo "State migration failed. Running without migration."
-            terraform init
-          fi
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0  # Specify the version of Terraform you want to use
+
+      - name: Terraform Init
+        run: terraform init
 
       - name: Terraform Plan
-        run: terraform plan -out=tfplan
+        run: terraform plan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
+        run: terraform apply -auto-approve
